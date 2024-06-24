@@ -61,7 +61,10 @@ function Wait-ForNamespaceGeoProvisioning {
             return
         }
         
-        if($null -eq $namespace){ return }
+        if($null -eq $namespace){ 
+            Write-Output "Namespace $namespaceName is geo provisioned."
+            return 
+        }
         
         Write-Output "Namespace $namespaceName is still in geo provisioning state: $($namespace.ProvisioningState). Waiting..."
         Start-Sleep -Seconds $delay
@@ -90,13 +93,11 @@ function Wait-ForNamespaceAndGeoProvisining {
     return
 }
 
-Write-Host "`n3. Failing Over : Azure Service Bus ..." -ForegroundColor Green
-
 #************** Initiate failover ***************************************************************************************************************
 
 Wait-ForNamespaceAndGeoProvisining -resourceGroupName $resourceGroupName -PrimaryNamespace $sbusPrimaryNamespace -SecondaryNamespace $sbusSecondaryNamespace
 
-Write-Output "`n3. Failing Over : Azure Service Bus $sbusPrimaryNamespace ...`n"
+Write-Output "`nFailing Over : Azure Service Bus $sbusPrimaryNamespace ...`n"
 
 Set-AzServiceBusGeoDRConfigurationFailOver `
     -Name $sbusAliasName `
